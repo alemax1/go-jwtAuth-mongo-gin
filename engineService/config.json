@@ -1,0 +1,17 @@
+{
+    "engineDB":{
+        "port":5433,
+        "user": "postgres",
+        "host": "localhost",
+        "password": "1234",
+        "dbname": "postgres",
+        "sslmode": "disable"
+    },
+    "routes":{
+        "port":1323
+    },
+    "server":{
+        "network":"tcp",
+        "port":"9000"
+    }
+}

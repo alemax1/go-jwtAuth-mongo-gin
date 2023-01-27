@@ -1,0 +1,10 @@
+{
+    "routes":{
+        "port":8088
+    },
+    "servicesURLs":{
+        "user":"localhost:9090",
+        "car":"localhost:9080",
+        "engine":"localhost:9000"
+    }
+}

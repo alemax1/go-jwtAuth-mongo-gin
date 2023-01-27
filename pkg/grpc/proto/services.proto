@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./pb";
+
+service EngineService{
+  rpc GetAllEngines(Req) returns (Engines){}
+  rpc GetEnginesByIDs(EnginesIDs) returns(Engines){}
+  rpc GetEngineByID(EngineID) returns(Engine){}
+}
+
+service UserService{
+  rpc GetCarsIDsByID(UserID) returns(CarsIDs){}
+}
+
+service CarService{
+  rpc GetCarsByIDs(CarsIDs) returns(Cars){}
+  rpc GetEngineID(CarID) returns(EngineID){}
+  rpc GetEnginesIDs(CarsIDs) returns(EnginesIDs){}
+}
+
+message Req{}
+
+message UserID{
+  int32 id = 1;
+}
+
+message CarID{
+  int32 id = 1;
+}
+
+message EngineID{
+  int32 id = 1;
+}
+
+message CarsIDs{
+  repeated int32 carsIDs= 1;
+}
+
+message Car{
+  int32 id = 1;
+  string concern = 2;
+  string model = 3;
+  int32 year = 4;
+  bool used = 5;
+  int32 engineID = 6;
+  int32 price = 7;
+}
+
+message Cars{
+  repeated Car cars = 1;
+}
+
+message Engine{
+  int32 id = 1;
+  string volume = 2;
+}
+
+message Engines{
+  repeated Engine engines = 1;
+}
+
+message EnginesIDs{
+  repeated int32 enginesIDs=1;
+}

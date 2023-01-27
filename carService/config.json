@@ -1,0 +1,17 @@
+{
+    "carDB":{
+        "port":5430,
+        "user":"postgres",
+        "host":"localhost",
+        "password":"1234",
+        "dbname": "postgres",
+        "sslmode":"disable"
+    },
+    "routes":{
+        "port":8000
+    },
+    "server":{
+        "network":"tcp",
+        "port":"9080"
+    }
+}

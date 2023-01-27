@@ -1,0 +1,17 @@
+{
+    "userDB":{
+        "port":5435,
+        "user": "postgres",
+        "host": "localhost",
+        "password": "1234",
+        "dbname": "postgres",
+        "sslmode": "disable"
+    },
+    "routes":{
+        "port":8080
+    },
+    "server":{
+        "network":"tcp",
+        "port":"9090"
+    }
+}

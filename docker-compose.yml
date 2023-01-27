@@ -1,0 +1,25 @@
+services:
+
+  cardb:
+    container_name: car_db
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - 5430:5432
+
+  enginedb:
+    container_name: engine_db
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - 5433:5432
+
+  userdb:
+    container_name: user_db
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - 5435:5432
