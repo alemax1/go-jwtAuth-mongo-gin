@@ -11,6 +11,9 @@ require (
 )
 
 require (
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	google.golang.org/genproto v0.0.0-20221118155620-16455021b5e6 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )

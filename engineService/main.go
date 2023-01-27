@@ -1,6 +1,7 @@
 package main
 
 import (
+	"amaksimov/engineService/cache"
 	"amaksimov/engineService/db"
 	"amaksimov/engineService/server"
 	"log"
@@ -18,6 +19,11 @@ func main() {
 	if err := db.CreateConnection(); err != nil {
 		log.Fatalf("error trying connect to database: %v", err)
 	}
+
+	if err := cache.CreateRedisConnection(); err != nil {
+		log.Fatalf("error creating redis connection: %v", err)
+	}
+	log.Println("Redis connection successfully created")
 
 	if err := server.CreateEngineServer(); err != nil {
 		log.Fatalf("error trying create user server: %v", err)

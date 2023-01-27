@@ -7,11 +7,12 @@
         "dbname": "postgres",
         "sslmode":"disable"
     },
-    "routes":{
-        "port":8000
-    },
     "server":{
         "network":"tcp",
         "port":"9080"
+    },
+    "redis":{
+        "url":"localhost:6389",
+        "password":"1234"
     }
 }
