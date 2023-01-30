@@ -12,7 +12,7 @@ type Response struct {
 type Car struct {
 	ID      int32  `json:"ID"`
 	Concern string `json:"concern"`
-	Model   string `jsom:"model"`
+	Model   string `json:"model"`
 	Year    int32  `json:"year"`
 	Used    bool   `json:"used"`
 	Engine  `json:"engine"`

@@ -2,7 +2,6 @@ package db
 
 import (
 	"amaksimov/engineService/models"
-	"amaksimov/pkg/grpc/pb"
 	"log"
 
 	"github.com/lib/pq"
@@ -25,7 +24,7 @@ func GetAllEngines() ([]models.Engine, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&e.ID, &e.Volume); err != nil {
-			log.Printf("error trying scan car IDs: %v", err)
+			log.Printf("error trying scan engine: %v", err)
 
 			continue
 		}
@@ -50,6 +49,7 @@ func GetEngineByID(ID int32) (*models.Engine, error) {
 	var e models.Engine
 
 	if err := row.Scan(&e.ID, &e.Volume); err != nil {
+		log.Printf("error trying scan engine: %v", err)
 		return nil, err
 	}
 
@@ -74,7 +74,7 @@ func GetEnginesByIDs(IDs []int32) ([]models.Engine, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&e.ID, &e.Volume); err != nil {
-			log.Printf("error trying scan car IDs: %v", err)
+			log.Printf("error trying scan engine: %v", err)
 
 			continue
 		}
@@ -85,7 +85,7 @@ func GetEnginesByIDs(IDs []int32) ([]models.Engine, error) {
 	return engines, nil
 }
 
-func CreateEngine(e *pb.Engine) (*models.Engine, error) {
+func CreateEngine(en models.Engine) (*models.Engine, error) {
 	query := `
 	INSERT INTO 
 		ENGINES(volume)
@@ -98,19 +98,17 @@ func CreateEngine(e *pb.Engine) (*models.Engine, error) {
 	}
 	defer stmt.Close()
 
-	var (
-		ID     int32
-		volume float32
-	)
+	var e models.Engine
 
-	if err = stmt.QueryRow(e.Volume).Scan(&ID, &volume); err != nil {
+	if err = stmt.QueryRow(en.Volume).Scan(&e.ID, &e.Volume); err != nil {
+		log.Printf("error trying scan engine: %v", err)
 		return nil, err
 	}
 
-	return &models.Engine{ID: ID, Volume: volume}, nil
+	return &e, nil
 }
 
-func UpdateEngine(engineID int32, v float32) (*models.Engine, error) {
+func UpdateEngine(en models.Engine) (*models.Engine, error) {
 	query := `
 	UPDATE engines
 	SET volume = $2
@@ -123,16 +121,14 @@ func UpdateEngine(engineID int32, v float32) (*models.Engine, error) {
 	}
 	defer stmt.Close()
 
-	var (
-		ID     int32
-		volume float32
-	)
+	var e models.Engine
 
-	if err = stmt.QueryRow(engineID, volume).Scan(&ID, &volume); err != nil {
+	if err = stmt.QueryRow(en.ID, en.Volume).Scan(&e.ID, &e.Volume); err != nil {
+		log.Printf("error trying scan engine: %v", err)
 		return nil, err
 	}
 
-	return &models.Engine{ID: ID, Volume: volume}, nil
+	return &e, nil
 }
 
 func DeleteEngine(engineID int32) error {

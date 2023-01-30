@@ -29,12 +29,18 @@ func (es *EngineServer) GetAllEngines(ctx context.Context, req *pb.Req) (*pb.Eng
 
 	keys := cache.Redis.Client.Keys(ctx, "*engine_*")
 	if len(keys.Val()) != 0 {
-		for _, val := range keys.Val() {
-			key := cache.Redis.Client.Get(ctx, val)
+		for _, key := range keys.Val() {
+			value := cache.Redis.Client.Get(ctx, key).Val()
+
+			if value == "" {
+				log.Println("cant find record in cache")
+
+				continue
+			}
 
 			var e models.Engine
 
-			if err := json.Unmarshal([]byte(key.Val()), &e); err != nil {
+			if err := json.Unmarshal([]byte(value), &e); err != nil {
 				log.Printf("error trying unmarshall key bytes: %v", err)
 
 				continue
@@ -70,16 +76,19 @@ func (es *EngineServer) GetEngineByID(ctx context.Context, req *pb.EngineID) (*p
 		err    error
 	)
 
-	pattern := fmt.Sprintf("engine_%v", req.Id)
+	key := fmt.Sprintf("engine_%v", req.Id)
 
-	keys := cache.Redis.Client.Keys(ctx, pattern)
+	value := cache.Redis.Client.Get(ctx, key).Val()
 
-	if len(keys.Val()) != 0 {
-		key := cache.Redis.Client.Get(ctx, keys.Val()[0])
+	if value == "" {
+		log.Println("cant find record in cache")
+	}
 
-		if err := json.Unmarshal([]byte(key.Val()), &engine); err != nil {
-			log.Printf("error trying unmarshall key bytes: %v", err)
-		}
+	if err := json.Unmarshal([]byte(value), engine); err != nil {
+		log.Printf("error trying unmarshall key bytes: %v", err)
+	}
+
+	if engine != nil {
 		goto Return
 	}
 
@@ -106,6 +115,12 @@ func (es *EngineServer) GetEnginesByIDs(ctx context.Context, req *pb.EnginesIDs)
 		key := fmt.Sprintf("engine_%d", val)
 
 		value := cache.Redis.Client.Get(ctx, key).Val()
+
+		if value == "" {
+			log.Println("cant find record in cache")
+
+			continue
+		}
 
 		var e models.Engine
 
@@ -137,19 +152,19 @@ Parse:
 }
 
 func (es *EngineServer) CreateEngine(ctx context.Context, req *pb.Engine) (*pb.Engine, error) {
-	engine, err := db.CreateEngine(req)
+	engine, err := db.CreateEngine(models.Engine{ID: req.Id, Volume: req.Volume})
+	if err != nil {
+		return nil, err
+	}
+
+	var e = models.Engine{ID: engine.ID, Volume: engine.Volume}
+
+	engineBytes, err := json.Marshal(&e)
 	if err != nil {
 		return nil, err
 	}
 
 	key := fmt.Sprintf("engine_%d", engine.ID)
-
-	var e = &models.Engine{ID: engine.ID, Volume: engine.Volume}
-
-	engineBytes, err := json.Marshal(e)
-	if err != nil {
-		return nil, err
-	}
 
 	cache.Redis.Client.Set(context.Background(), key, engineBytes, 0)
 
@@ -157,23 +172,24 @@ func (es *EngineServer) CreateEngine(ctx context.Context, req *pb.Engine) (*pb.E
 }
 
 func (es *EngineServer) UpdateEngine(ctx context.Context, req *pb.UpdateEngineRequest) (*pb.Engine, error) {
-	engine, err := db.UpdateEngine(req.Id, req.Volume)
+	engine, err := db.UpdateEngine(models.Engine{ID: req.Id, Volume: req.Volume})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(statusCodes.NoData, "no rows")
+		}
+		return nil, err
+	}
+
+	var e = models.Engine{ID: engine.ID, Volume: engine.Volume}
+
+	engineBytes, err := json.Marshal(&e)
 	if err != nil {
 		return nil, err
 	}
 
 	key := fmt.Sprintf("engine_%d", req.Id)
 
-	var e = &models.Engine{ID: engine.ID, Volume: engine.Volume}
-
-	engineBytes, err := json.Marshal(e)
-	if err != nil {
-		return nil, err
-	}
-
 	cache.Redis.Client.Set(context.Background(), key, engineBytes, 0)
-
-	fmt.Println(e)
 
 	return &pb.Engine{Id: e.ID, Volume: e.Volume}, nil
 }

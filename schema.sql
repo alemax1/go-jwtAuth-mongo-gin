@@ -35,19 +35,19 @@ CREATE TABLE IF NOT EXISTS car_configurations(
 );
 
 INSERT INTO car_configurations(concern, model, year, used, engine_id) 
-VALUES('BMW', "M5", 1999, true, 2),
-('BMW', "M3", 2002, true, 1),
-('Mersedes', "C-class" 2000, true, 3),
-('Mersedes', "E-class" 2022, false, 6),
-('Toyota', "Camry", 2022, false, 4),
-('Opel', "Astra", 2010, true, 5),
-('Kia', "Optima", 2022, flase, 1);
+VALUES('BMW', 'M5', 1999, true, 2),
+('BMW', 'M3', 2002, true, 1),
+('Mersedes', 'C-class', 2000, true, 3),
+('Mersedes', 'E-class', 2022, false, 6),
+('Toyota', 'Camry', 2022, false, 4),
+('Opel', 'Astra', 2010, true, 5),
+('Kia', 'Optima', 2022, false, 1);
 
 CREATE TABLE IF NOT EXISTS cars(
     id SERIAL PRIMARY KEY,
     configuration_id integer,
     price integer,
-    FOREIGN KEY (configuration_id) REFERENCES car_configuration(id)
+    FOREIGN KEY (configuration_id) REFERENCES car_configurations(id)
 );
 
 INSERT INTO cars(configuration_id, price)
