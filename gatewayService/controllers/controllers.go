@@ -3,6 +3,7 @@ package controllers
 import (
 	"amaksimov/gatewayService/grpc"
 	"amaksimov/gatewayService/models"
+	"fmt"
 
 	"amaksimov/pkg/grpc/pb"
 	"amaksimov/pkg/grpc/statusCodes"
@@ -143,4 +144,92 @@ func GetUserEngines(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, models.EnginesResponse{Data: engineClientResp.Engines})
+}
+
+func CreateEngine(c echo.Context) error {
+	var e models.Engine
+
+	if err := c.Bind(&e); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response{Message: "invalid engine"})
+	}
+
+	engineService := pb.NewEngineServiceClient(grpc.EngineClient.Conn)
+
+	engineServiceResp, err := engineService.CreateEngine(context.Background(), &pb.Engine{Volume: e.Volume})
+	if err != nil {
+		log.Printf("error calling CreateEngine func: %v", err)
+		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
+	}
+
+	var en = &pb.Engine{Id: engineServiceResp.Id, Volume: engineServiceResp.Volume}
+
+	fmt.Println(en, engineServiceResp.Id)
+
+	return c.JSON(http.StatusCreated, models.EngineResponse{Data: en})
+}
+
+func UpdateEngine(c echo.Context) error {
+	var e models.Engine
+
+	if err := c.Bind(&e); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response{Message: "invalid engine"})
+	}
+
+	engineID, err := strconv.Atoi(c.Param("id"))
+	if err != nil || engineID < 1 {
+		return c.JSON(http.StatusBadRequest, models.Response{Message: "invalid id"})
+	}
+
+	engineService := pb.NewEngineServiceClient(grpc.EngineClient.Conn)
+
+	en, err := engineService.UpdateEngine(context.Background(), &pb.UpdateEngineRequest{Id: int32(engineID), Volume: e.Volume})
+	if err != nil {
+		log.Printf("error calling DeleteEngine func: %v", err)
+		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
+	}
+
+	return c.JSON(http.StatusOK, models.EngineResponse{Data: en})
+}
+
+func DeleteEngine(c echo.Context) error {
+	engineID, err := strconv.Atoi(c.Param("id"))
+	if err != nil || engineID < 1 {
+		return c.JSON(http.StatusBadRequest, models.Response{Message: "invalid id"})
+	}
+
+	engineService := pb.NewEngineServiceClient(grpc.EngineClient.Conn)
+
+	if _, err := engineService.DeleteEngine(context.Background(), &pb.EngineID{Id: int32(engineID)}); err != nil {
+		log.Printf("error calling DeleteEngine func: %v", err)
+		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
+	}
+
+	carService := pb.NewCarServiceClient(grpc.CarClient.Conn)
+
+	if _, err := carService.DeleteCarConfiguration(context.Background(), &pb.EngineID{Id: int32(engineID)}); err != nil {
+		log.Printf("error calling DeleteEngine func: %v", err)
+		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
+	}
+
+	return c.JSON(http.StatusOK, models.Response{Message: "Successfully deleted"})
+}
+
+func GetEngineByID(c echo.Context) error {
+	engineID, err := strconv.Atoi(c.Param("id"))
+	if err != nil || engineID < 1 {
+		return c.JSON(http.StatusBadRequest, models.Response{Message: "invalid id"})
+	}
+
+	engineService := pb.NewEngineServiceClient(grpc.EngineClient.Conn)
+
+	engineResponse, err := engineService.GetEngineByID(context.Background(), &pb.EngineID{Id: int32(engineID)})
+	if status.Code(err) == statusCodes.NoData {
+		return c.JSON(200, models.EngineResponse{Data: nil})
+	}
+	if err != nil {
+		log.Printf("error calling GetEngineByID func: %v", err)
+		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
+	}
+
+	return c.JSON(http.StatusOK, models.EngineResponse{Data: engineResponse})
 }

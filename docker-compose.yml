@@ -24,15 +24,6 @@ services:
     ports:
       - 5435:5432
 
-  car_cache:
-    container_name: car_cache
-    image: 'bitnami/redis:latest'
-    environment:
-    - REDIS_PASSWORD=1234
-    - REDIS_PORT_NUMBER=6389
-    ports:
-    - '6389:6389'
-
   engine_cache:
     container_name: engine_cache
     image: 'bitnami/redis:latest'

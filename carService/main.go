@@ -1,7 +1,6 @@
 package main
 
 import (
-	"amaksimov/carService/cache"
 	"amaksimov/carService/db"
 	"amaksimov/carService/server"
 
@@ -20,11 +19,6 @@ func main() {
 	if err := db.CreateConnection(); err != nil {
 		log.Fatalf("error trying connect to database: %v", err)
 	}
-
-	if err := cache.CreateRedisConnection(); err != nil {
-		log.Fatalf("error creating redis connection: %v", err)
-	}
-	log.Println("Redis connection successfully created")
 
 	if err := server.CreateCarServer(); err != nil {
 		log.Fatalf("error trying create car server: %v", err)

@@ -61,3 +61,12 @@ func (cs *CarServer) GetEnginesIDs(ctx context.Context, req *pb.CarsIDs) (*pb.En
 
 	return &pb.EnginesIDs{EnginesIDs: enginesIDs}, nil
 }
+
+func (cs *CarServer) DeleteCarConfiguration(ctx context.Context, req *pb.EngineID) (*pb.Resp, error) {
+	if err := db.DeleteCarConfiguration(req.Id); err != nil {
+		log.Printf("error trying delete car configuration: %v", err)
+		return nil, err
+	}
+
+	return &pb.Resp{}, nil
+}

@@ -95,3 +95,34 @@ func GetEnginesByIDs(carIDs []int32) ([]int32, error) {
 
 	return enginesIDs, nil
 }
+
+func DeleteCarConfiguration(engineID int32) error {
+	txn, err := connection.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer txn.Rollback()
+
+	if _, err := txn.Exec(`
+	DELETE FROM cars c
+		USING car_configurations cc
+	WHERE c.configuration_id=cc.id AND 
+	cc.engine_id=$1
+	`, engineID); err != nil {
+		return err
+	}
+
+	if _, err := txn.Exec(`
+	DELETE 
+	FROM car_configurations
+	WHERE engine_id = $1`, engineID); err != nil {
+		return err
+	}
+
+	if err := txn.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}

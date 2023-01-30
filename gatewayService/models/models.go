@@ -20,12 +20,12 @@ type Car struct {
 }
 
 type CarResponse struct {
-	Data []*Car `json:"message"`
+	Data []*Car `json:"data"`
 }
 
 type Engine struct {
-	EngineID int32  `json:"ID"`
-	Volume   string `json:"volume"`
+	EngineID int32   `json:"ID"`
+	Volume   float32 `json:"volume"`
 }
 
 type EngineResponse struct {

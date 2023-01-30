@@ -24,7 +24,11 @@ const _ = grpc.SupportPackageIsVersion7
 type EngineServiceClient interface {
 	GetAllEngines(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Engines, error)
 	GetEnginesByIDs(ctx context.Context, in *EnginesIDs, opts ...grpc.CallOption) (*Engines, error)
+	GetEngineByCarID(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Engine, error)
+	CreateEngine(ctx context.Context, in *Engine, opts ...grpc.CallOption) (*Engine, error)
 	GetEngineByID(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Engine, error)
+	UpdateEngine(ctx context.Context, in *UpdateEngineRequest, opts ...grpc.CallOption) (*Engine, error)
+	DeleteEngine(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Resp, error)
 }
 
 type engineServiceClient struct {
@@ -53,9 +57,45 @@ func (c *engineServiceClient) GetEnginesByIDs(ctx context.Context, in *EnginesID
 	return out, nil
 }
 
+func (c *engineServiceClient) GetEngineByCarID(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Engine, error) {
+	out := new(Engine)
+	err := c.cc.Invoke(ctx, "/proto.EngineService/GetEngineByCarID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineServiceClient) CreateEngine(ctx context.Context, in *Engine, opts ...grpc.CallOption) (*Engine, error) {
+	out := new(Engine)
+	err := c.cc.Invoke(ctx, "/proto.EngineService/CreateEngine", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *engineServiceClient) GetEngineByID(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Engine, error) {
 	out := new(Engine)
 	err := c.cc.Invoke(ctx, "/proto.EngineService/GetEngineByID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineServiceClient) UpdateEngine(ctx context.Context, in *UpdateEngineRequest, opts ...grpc.CallOption) (*Engine, error) {
+	out := new(Engine)
+	err := c.cc.Invoke(ctx, "/proto.EngineService/UpdateEngine", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineServiceClient) DeleteEngine(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/proto.EngineService/DeleteEngine", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +108,11 @@ func (c *engineServiceClient) GetEngineByID(ctx context.Context, in *EngineID, o
 type EngineServiceServer interface {
 	GetAllEngines(context.Context, *Req) (*Engines, error)
 	GetEnginesByIDs(context.Context, *EnginesIDs) (*Engines, error)
+	GetEngineByCarID(context.Context, *EngineID) (*Engine, error)
+	CreateEngine(context.Context, *Engine) (*Engine, error)
 	GetEngineByID(context.Context, *EngineID) (*Engine, error)
+	UpdateEngine(context.Context, *UpdateEngineRequest) (*Engine, error)
+	DeleteEngine(context.Context, *EngineID) (*Resp, error)
 	mustEmbedUnimplementedEngineServiceServer()
 }
 
@@ -82,8 +126,20 @@ func (UnimplementedEngineServiceServer) GetAllEngines(context.Context, *Req) (*E
 func (UnimplementedEngineServiceServer) GetEnginesByIDs(context.Context, *EnginesIDs) (*Engines, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEnginesByIDs not implemented")
 }
+func (UnimplementedEngineServiceServer) GetEngineByCarID(context.Context, *EngineID) (*Engine, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEngineByCarID not implemented")
+}
+func (UnimplementedEngineServiceServer) CreateEngine(context.Context, *Engine) (*Engine, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEngine not implemented")
+}
 func (UnimplementedEngineServiceServer) GetEngineByID(context.Context, *EngineID) (*Engine, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEngineByID not implemented")
+}
+func (UnimplementedEngineServiceServer) UpdateEngine(context.Context, *UpdateEngineRequest) (*Engine, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEngine not implemented")
+}
+func (UnimplementedEngineServiceServer) DeleteEngine(context.Context, *EngineID) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEngine not implemented")
 }
 func (UnimplementedEngineServiceServer) mustEmbedUnimplementedEngineServiceServer() {}
 
@@ -134,6 +190,42 @@ func _EngineService_GetEnginesByIDs_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_GetEngineByCarID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EngineID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).GetEngineByCarID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.EngineService/GetEngineByCarID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).GetEngineByCarID(ctx, req.(*EngineID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EngineService_CreateEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Engine)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).CreateEngine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.EngineService/CreateEngine",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).CreateEngine(ctx, req.(*Engine))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _EngineService_GetEngineByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EngineID)
 	if err := dec(in); err != nil {
@@ -148,6 +240,42 @@ func _EngineService_GetEngineByID_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EngineServiceServer).GetEngineByID(ctx, req.(*EngineID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EngineService_UpdateEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEngineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).UpdateEngine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.EngineService/UpdateEngine",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).UpdateEngine(ctx, req.(*UpdateEngineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EngineService_DeleteEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EngineID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).DeleteEngine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.EngineService/DeleteEngine",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).DeleteEngine(ctx, req.(*EngineID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -168,8 +296,24 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EngineService_GetEnginesByIDs_Handler,
 		},
 		{
+			MethodName: "GetEngineByCarID",
+			Handler:    _EngineService_GetEngineByCarID_Handler,
+		},
+		{
+			MethodName: "CreateEngine",
+			Handler:    _EngineService_CreateEngine_Handler,
+		},
+		{
 			MethodName: "GetEngineByID",
 			Handler:    _EngineService_GetEngineByID_Handler,
+		},
+		{
+			MethodName: "UpdateEngine",
+			Handler:    _EngineService_UpdateEngine_Handler,
+		},
+		{
+			MethodName: "DeleteEngine",
+			Handler:    _EngineService_DeleteEngine_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -269,6 +413,7 @@ type CarServiceClient interface {
 	GetCarsByIDs(ctx context.Context, in *CarsIDs, opts ...grpc.CallOption) (*Cars, error)
 	GetEngineID(ctx context.Context, in *CarID, opts ...grpc.CallOption) (*EngineID, error)
 	GetEnginesIDs(ctx context.Context, in *CarsIDs, opts ...grpc.CallOption) (*EnginesIDs, error)
+	DeleteCarConfiguration(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Resp, error)
 }
 
 type carServiceClient struct {
@@ -306,6 +451,15 @@ func (c *carServiceClient) GetEnginesIDs(ctx context.Context, in *CarsIDs, opts 
 	return out, nil
 }
 
+func (c *carServiceClient) DeleteCarConfiguration(ctx context.Context, in *EngineID, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/proto.CarService/DeleteCarConfiguration", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CarServiceServer is the server API for CarService service.
 // All implementations must embed UnimplementedCarServiceServer
 // for forward compatibility
@@ -313,6 +467,7 @@ type CarServiceServer interface {
 	GetCarsByIDs(context.Context, *CarsIDs) (*Cars, error)
 	GetEngineID(context.Context, *CarID) (*EngineID, error)
 	GetEnginesIDs(context.Context, *CarsIDs) (*EnginesIDs, error)
+	DeleteCarConfiguration(context.Context, *EngineID) (*Resp, error)
 	mustEmbedUnimplementedCarServiceServer()
 }
 
@@ -328,6 +483,9 @@ func (UnimplementedCarServiceServer) GetEngineID(context.Context, *CarID) (*Engi
 }
 func (UnimplementedCarServiceServer) GetEnginesIDs(context.Context, *CarsIDs) (*EnginesIDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEnginesIDs not implemented")
+}
+func (UnimplementedCarServiceServer) DeleteCarConfiguration(context.Context, *EngineID) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCarConfiguration not implemented")
 }
 func (UnimplementedCarServiceServer) mustEmbedUnimplementedCarServiceServer() {}
 
@@ -396,6 +554,24 @@ func _CarService_GetEnginesIDs_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CarService_DeleteCarConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EngineID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CarServiceServer).DeleteCarConfiguration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.CarService/DeleteCarConfiguration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CarServiceServer).DeleteCarConfiguration(ctx, req.(*EngineID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CarService_ServiceDesc is the grpc.ServiceDesc for CarService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -414,6 +590,10 @@ var CarService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEnginesIDs",
 			Handler:    _CarService_GetEnginesIDs_Handler,
+		},
+		{
+			MethodName: "DeleteCarConfiguration",
+			Handler:    _CarService_DeleteCarConfiguration_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
