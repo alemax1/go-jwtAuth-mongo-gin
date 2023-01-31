@@ -30,34 +30,34 @@ CREATE TABLE IF NOT EXISTS car_configurations(
     concern VARCHAR(20),
     model VARCHAR(20),
     year INTEGER,
-    used BOOLEAN,
     engine_id INTEGER
 );
 
-INSERT INTO car_configurations(concern, model, year, used, engine_id) 
-VALUES('BMW', 'M5', 1999, true, 2),
-('BMW', 'M3', 2002, true, 1),
-('Mersedes', 'C-class', 2000, true, 3),
-('Mersedes', 'E-class', 2022, false, 6),
-('Toyota', 'Camry', 2022, false, 4),
-('Opel', 'Astra', 2010, true, 5),
-('Kia', 'Optima', 2022, false, 1);
+INSERT INTO car_configurations(concern, model, year, engine_id) 
+VALUES('BMW', 'M5', 1999, 2),
+('BMW', 'M3', 2002, 1),
+('Mersedes', 'C-class', 2000, 3),
+('Mersedes', 'E-class', 2022, 6),
+('Toyota', 'Camry', 2022, 4),
+('Opel', 'Astra', 2010, 5),
+('Kia', 'Optima', 2022, 1);
 
 CREATE TABLE IF NOT EXISTS cars(
     id SERIAL PRIMARY KEY,
     configuration_id integer,
+    used BOOLEAN,
     price integer,
     FOREIGN KEY (configuration_id) REFERENCES car_configurations(id)
 );
 
-INSERT INTO cars(configuration_id, price)
-VALUES(1, 2000000),
-(2, 2400000),
-(3, 1800000),
-(4, 8000000),
-(5, 4000000),
-(6, 800000),
-(7, 220000);
+INSERT INTO cars(configuration_id, used, price)
+VALUES(1, true, 2000000),
+(2, false, 2400000),
+(3, false, 1800000),
+(4, true, 8000000),
+(5, false, 4000000),
+(6, true, 800000),
+(7, false, 220000);
 
 DROP TABLE IF EXISTS cars;
 

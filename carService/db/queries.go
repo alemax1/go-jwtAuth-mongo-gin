@@ -10,7 +10,7 @@ import (
 func GetCarsByIDs(IDs []int32) ([]models.Car, error) {
 	rows, err := connection.db.Query(`
 	SELECT 
-		cc.id, cc.concern, cc.model, cc.year, cc.used, cc.engine_id, c.price
+		cc.id, cc.concern, cc.model, cc.year, cc.engine_id, c.price, c.used
 	FROM car_configurations cc
 		INNER JOIN cars c ON c.configuration_id=cc.id
 	WHERE c.id = any($1)`, pq.Array(IDs))
@@ -30,9 +30,9 @@ func GetCarsByIDs(IDs []int32) ([]models.Car, error) {
 			&c.Concern,
 			&c.Model,
 			&c.Year,
-			&c.Used,
 			&c.EngineID,
 			&c.Price,
+			&c.Used,
 		); err != nil {
 			log.Printf("error trying scan car IDs: %v", err)
 
