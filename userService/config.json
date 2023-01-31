@@ -10,9 +10,5 @@
     "server":{
         "network":"tcp",
         "port":"9090"
-    },
-    "redis":{
-        "url":"localhost:6369",
-        "password":"1234"
     }
 }
