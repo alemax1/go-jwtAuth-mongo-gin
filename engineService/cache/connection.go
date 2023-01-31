@@ -19,6 +19,7 @@ func CreateRedisConnection() error {
 		Password: viper.GetString("redis.password"),
 	})
 
+	// TODO: почему бы не добавить timeout для пинга?
 	if _, err := Redis.Client.Ping(context.Background()).Result(); err != nil {
 		return err
 	}

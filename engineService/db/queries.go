@@ -7,6 +7,7 @@ import (
 	"github.com/lib/pq"
 )
 
+// TODO: пиши короткие sql запросы в одной строке
 func GetAllEngines() ([]models.Engine, error) {
 	rows, err := connection.db.Query(`
 	SELECT
@@ -35,6 +36,7 @@ func GetAllEngines() ([]models.Engine, error) {
 	return engines, nil
 }
 
+// TODO: пиши короткие sql запросы в одной строке "SELECT DISTINCT id, volume FROM engines WHERE id = ANY($1)"
 func GetEngineByID(ID int32) (*models.Engine, error) {
 	row := connection.db.QueryRow(
 		`SELECT 
@@ -56,6 +58,7 @@ func GetEngineByID(ID int32) (*models.Engine, error) {
 	return &e, nil
 }
 
+// TODO: пиши короткие sql запросы в одной строке "SELECT DISTINCT id, volume FROM engines WHERE id = ANY($1)"
 func GetEnginesByIDs(IDs []int32) ([]models.Engine, error) {
 	rows, err := connection.db.Query(`
 	SELECT DISTINCT
@@ -74,7 +77,7 @@ func GetEnginesByIDs(IDs []int32) ([]models.Engine, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&e.ID, &e.Volume); err != nil {
-			log.Printf("error trying scan engine: %v", err)
+			log.Printf("error trying scan engine: %v", err) // TODO: все логи что ты написал в репозитории - удалить, тут их не должно быть
 
 			continue
 		}
@@ -85,6 +88,8 @@ func GetEnginesByIDs(IDs []int32) ([]models.Engine, error) {
 	return engines, nil
 }
 
+// TODO: запрос не длинный, можно записать его в одну строчку сразу как аргумент запроса
+// TODO: зачем тут подготавливать запрос, для чего ты это написал?
 func CreateEngine(en models.Engine) (*models.Engine, error) {
 	query := `
 	INSERT INTO 
@@ -108,6 +113,8 @@ func CreateEngine(en models.Engine) (*models.Engine, error) {
 	return &e, nil
 }
 
+// TODO: запрос не длинный, можно записать его в одну строчку сразу как аргумент запроса
+// TODO: зачем тут подготавливать запрос, для чего ты это написал?
 func UpdateEngine(en models.Engine) (*models.Engine, error) {
 	query := `
 	UPDATE engines
@@ -131,6 +138,7 @@ func UpdateEngine(en models.Engine) (*models.Engine, error) {
 	return &e, nil
 }
 
+// TODO: запрос не длинный, можно записать его в одну строчку сразу как аргумент запроса
 func DeleteEngine(engineID int32) error {
 	if _, err := connection.db.Exec(`
 	DELETE FROM engines

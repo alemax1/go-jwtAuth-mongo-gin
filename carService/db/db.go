@@ -26,11 +26,11 @@ func CreateConnection() error {
 		viper.GetString("carDB.sslmode"))
 
 	if connection.db, err = sql.Open("postgres", dsn); err != nil {
-		return err
+		return err // где враппинг ошибки?
 	}
 
 	if err = connection.db.Ping(); err != nil {
-		return err
+		return err // где враппинг ошибки?
 	}
 
 	return nil

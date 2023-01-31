@@ -26,7 +26,7 @@ func CreateConnection() error {
 		viper.GetString("engineDB.sslmode"))
 
 	if connection.db, err = sql.Open("postgres", dsn); err != nil {
-		return err
+		return err // TODO: где враппинг ошибки - чтобы везде были, если больше одной возвращает функция/метод
 	}
 
 	if err = connection.db.Ping(); err != nil {

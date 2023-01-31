@@ -21,7 +21,7 @@ func GetAllEngines(c echo.Context) error {
 
 	response, err := engineService.GetAllEngines(context.Background(), &pb.Req{})
 	if err != nil {
-		log.Printf("error calling getAllEngines func: %v", err)
+		log.Printf("error calling getAllEngines func: %v", err) // TODO: разделяй log и return не строчи код строчкой за строчкой, если он не взаимосвязан
 		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
 	}
 
@@ -38,7 +38,7 @@ func GetUserCars(c echo.Context) error {
 
 	userClientResp, err := userService.GetCarsIDsByID(context.Background(), &pb.UserID{Id: int32(userID)})
 	if err != nil {
-		log.Printf("error calling GetCarsIDsByID func: %v", err)
+		log.Printf("error calling GetCarsIDsByID func: %v", err) // TODO: разделяй log и return не строчи код строчкой за строчкой, если он не взаимосвязан
 		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
 	}
 
@@ -46,25 +46,26 @@ func GetUserCars(c echo.Context) error {
 
 	carClientResp, err := carService.GetCarsByIDs(context.Background(), &pb.CarsIDs{CarsIDs: userClientResp.CarsIDs})
 	if err != nil {
-		log.Printf("error calling GetCarsByIDs func: %v", err)
+		log.Printf("error calling GetCarsByIDs func: %v", err) // TODO: разделяй log и return не строчи код строчкой за строчкой, если он не взаимосвязан
 		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
 	}
 
-	var enginesIDs []int32
-	for _, val := range carClientResp.Cars {
-		enginesIDs = append(enginesIDs, val.Id)
+	var enginesIDs []int32                   // TODO: если размер заранее известен объявляй переменные через make с заданным капасити
+	for _, val := range carClientResp.Cars { // TODO: имей привычку выполнять работу с циклами по индексу
+		enginesIDs = append(enginesIDs, val.Id) // TODO: что за Id
 	}
 
 	engineService := pb.NewEngineServiceClient(grpc.EngineClient.Conn)
 
 	engineClientResp, err := engineService.GetEnginesByIDs(context.Background(), &pb.EnginesIDs{EnginesIDs: enginesIDs})
 	if err != nil {
-		log.Printf("error calling GetEnginesByIDs func: %v", err)
+		log.Printf("error calling GetEnginesByIDs func: %v", err) // TODO: разделяй log и return не строчи код строчкой за строчкой, если он не взаимосвязан
 		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
 	}
 
-	var resp []*models.Car
+	var resp []*models.Car // TODO: если размер заранее известен объявляй переменные через make с заданным капасити
 
+	// TODO: что это такое, перепиши
 	for in, val := range carClientResp.Cars {
 		var r = &models.Car{ID: val.Id,
 			Concern: val.Concern,
@@ -94,7 +95,7 @@ func GetCarEngine(c echo.Context) error {
 		return c.JSON(200, models.CarResponse{Data: nil})
 	}
 	if err != nil {
-		log.Printf("error calling GetEngineID func: %v", err)
+		log.Printf("error calling GetEngineID func: %v", err) // TODO: ВЕЗДЕ ИСПРАВИТЬ
 		return c.JSON(http.StatusInternalServerError, models.Response{Message: "something went wrong"})
 	}
 

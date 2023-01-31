@@ -1,6 +1,6 @@
 package models
 
-import _ "encoding/json"
+import _ "encoding/json" // TODO: это для чего?
 
 type Car struct {
 	ID       int32  `json:"ID"`
