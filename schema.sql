@@ -42,10 +42,9 @@ VALUES('BMW', 'M5', 1999, 2),
 ('Opel', 'Astra', 2010, 5),
 ('Kia', 'Optima', 2022, 1);
 
--- TODO: Хочу видеть жесткую связь между cars и car_configurations
 CREATE TABLE IF NOT EXISTS cars(
     id SERIAL PRIMARY KEY,
-    configuration_id integer, 
+    configuration_id integer not null, 
     used BOOLEAN,
     price integer,
     FOREIGN KEY (configuration_id) REFERENCES car_configurations(id)

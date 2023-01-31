@@ -3,6 +3,7 @@ package server
 import (
 	"amaksimov/carService/controllers"
 	"amaksimov/pkg/grpc/pb"
+	"fmt"
 	"log"
 	"net"
 
@@ -11,10 +12,9 @@ import (
 )
 
 func CreateCarServer() error {
-	port := viper.GetString("server.port")
+	address := fmt.Sprintf("%s:%s", viper.GetString("server.host"), viper.GetString("server.port"))
 
-	// TODO: почему только порт, почему на задается ip ?
-	lis, err := net.Listen(viper.GetString("server.network"), ":"+port)
+	listener, err := net.Listen(viper.GetString("server.network"), address)
 	if err != nil {
 		return err // TODO: где враппинг ошибки?
 	}
@@ -23,9 +23,9 @@ func CreateCarServer() error {
 
 	pb.RegisterCarServiceServer(grpcServer, &controllers.CarServer{})
 
-	log.Printf("grpc server listening on: %v", port)
+	log.Printf("grpc server listening on: %v", viper.GetString("server.port"))
 
-	if err := grpcServer.Serve(lis); err != nil {
+	if err := grpcServer.Serve(listener); err != nil {
 		return err // TODO: где враппинг ошибки?
 	}
 

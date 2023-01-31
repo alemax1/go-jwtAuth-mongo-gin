@@ -9,6 +9,7 @@
     },
     "server":{
         "network":"tcp",
+        "host":"localhost",
         "port":"9090"
     }
 }

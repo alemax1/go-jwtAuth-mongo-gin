@@ -8,6 +8,7 @@
         "sslmode": "disable"
     },
     "server":{
+        "host":"localhost",
         "network":"tcp",
         "port":"9000"
     },
